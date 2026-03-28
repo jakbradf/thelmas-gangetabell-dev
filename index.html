@@ -242,6 +242,12 @@
     .lb-name { font-size: 16px; font-weight: 800; color: #1e1b4b; }
     .lb-date { font-size: 12px; color: #9ca3af; margin-top: 1px; }
     .lb-time { font-size: 18px; font-weight: 900; color: #7c3aed; flex-shrink: 0; }
+    .lb-delete {
+      background: none; border: none; cursor: pointer;
+      color: #d1d5db; font-size: 16px; padding: 4px 6px; border-radius: 8px;
+      flex-shrink: 0; line-height: 1; transition: color 0.15s, background 0.15s;
+    }
+    .lb-delete:hover { color: #ef4444; background: #fee2e2; }
 
     /* Cloud loading state */
     .lb-loading {
@@ -540,7 +546,7 @@
       list.innerHTML = '<div class="lb-empty">Ingen rekorder ennå for ' + lbFilter + ' spørsmål.<br>Vær den første! 🌟</div>';
       return;
     }
-    list.innerHTML = buildRows(entries, playerName);
+    list.innerHTML = buildRows(entries, playerName, 'local');
   }
 
   function renderCloudLeaderboard() {
@@ -552,21 +558,57 @@
         list.innerHTML = '<div class="lb-empty">Ingen sky-rekorder ennå for ' + lbFilter + ' spørsmål.<br>Vær den første! 🌟</div>';
         return;
       }
-      list.innerHTML = buildRows(entries, playerName);
+      list.innerHTML = buildRows(entries, playerName, 'cloud');
     });
   }
 
-  function buildRows(entries, highlight) {
-    return entries.map((e, i) => `
-      <div class="lb-row ${e.name === highlight ? 'highlight' : ''}">
-        <div class="lb-rank">${i < 3 ? MEDALS[i] : (i + 1) + '.'}</div>
-        <div class="lb-info">
-          <div class="lb-name">${escHtml(e.name)}</div>
-          <div class="lb-date">${e.date} · ${lbFilter} spørsm.</div>
+  function buildRows(entries, highlight, source) {
+    return entries.map((e, i) => {
+      const idAttr = source === 'cloud' ? `data-id="${e.id}"` : `data-idx="${i}"`;
+      return `
+        <div class="lb-row ${e.name === highlight ? 'highlight' : ''}" ${idAttr} data-source="${source}">
+          <div class="lb-rank">${i < 3 ? MEDALS[i] : (i + 1) + '.'}</div>
+          <div class="lb-info">
+            <div class="lb-name">${escHtml(e.name)}</div>
+            <div class="lb-date">${e.date} · ${lbFilter} spørsm.</div>
+          </div>
+          <div class="lb-time">${formatTime(e.time)}</div>
+          <button class="lb-delete" title="Slett" onclick="confirmDelete(this, '${source}')">🗑</button>
         </div>
-        <div class="lb-time">${formatTime(e.time)}</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+  }
+
+  function confirmDelete(btn, source) {
+    const row = btn.closest('.lb-row');
+    if (!confirm('Slette denne rekorden?')) return;
+    if (source === 'local') {
+      deleteLocalEntry(row);
+    } else {
+      deleteCloudEntry(row);
+    }
+  }
+
+  function deleteLocalEntry(row) {
+    const idx = parseInt(row.dataset.idx);
+    const lb = getLeaderboard();
+    const forCount = lb.filter(e => e.questions === lbFilter);
+    const entry = forCount[idx];
+    if (!entry) return;
+    const newLb = lb.filter(e => !(e.name === entry.name && Math.abs(e.time - entry.time) < 0.001 && e.questions === entry.questions));
+    localStorage.setItem('thelmas_leaderboard', JSON.stringify(newLb));
+    renderLeaderboard();
+  }
+
+  function deleteCloudEntry(row) {
+    const id = row.dataset.id;
+    if (!id) return;
+    fetch(`${SUPABASE_URL}/rest/v1/leaderboard?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: sbHeaders()
+    })
+    .then(() => renderLeaderboard())
+    .catch(e => { console.warn('Delete failed:', e); alert('Sletting feilet — prøv igjen.'); });
   }
 
   function escHtml(str) {
