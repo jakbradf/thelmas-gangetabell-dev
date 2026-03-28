@@ -544,7 +544,7 @@
   }
 
   function renderCloudLeaderboard() {
-    if (!firebaseReady) return;
+    if (!supabaseReady) return;
     const list = document.getElementById('lb-list');
     list.innerHTML = '<div class="lb-loading"><div class="lb-spinner"></div>Laster rekorder…</div>';
     getCloudLeaderboardForCount(lbFilter).then(entries => {
