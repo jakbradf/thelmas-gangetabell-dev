@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Thelmas gangetabell</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
   <meta name="theme-color" content="#7c3aed">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Thelmas ×">
-  <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <link rel="apple-touch-icon" href="icon.svg">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -25,7 +25,6 @@
       padding: 16px;
     }
 
-    /* ── SCREENS ── */
     .screen {
       display: none;
       flex-direction: column;
@@ -41,11 +40,10 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── CARD ── */
     .card {
       background: rgba(255,255,255,0.97);
       border-radius: 24px;
-      padding: 32px 24px;
+      padding: 28px 24px;
       width: 100%;
       box-shadow: 0 8px 40px rgba(0,0,0,0.25);
       text-align: center;
@@ -53,28 +51,48 @@
 
     /* ── HOME ── */
     .thelma-photo {
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
       object-fit: cover;
       object-position: center 15%;
       border: 4px solid #fff;
       box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
-    .home-emoji { font-size: 72px; margin-bottom: 12px; }
     .home-title {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       color: #5b21b6;
       line-height: 1.2;
-      margin-bottom: 6px;
+      margin-bottom: 16px;
     }
-    .home-sub {
-      font-size: 15px;
-      color: #9333ea;
-      margin-bottom: 32px;
+
+    /* Name input */
+    .name-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #7c3aed;
+      margin-bottom: 8px;
+      display: block;
+      text-align: left;
     }
+    .name-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      border: 2.5px solid #e9d5ff;
+      border-radius: 14px;
+      color: #1e1b4b;
+      outline: none;
+      margin-bottom: 16px;
+      background: #faf5ff;
+      transition: border-color 0.2s;
+    }
+    .name-input:focus { border-color: #7c3aed; }
+
+    .home-buttons { display: flex; flex-direction: column; gap: 10px; }
 
     /* ── SELECT ── */
     .select-title {
@@ -87,7 +105,6 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 8px;
     }
     .select-btn {
       background: linear-gradient(135deg, #7c3aed, #db2777);
@@ -102,236 +119,174 @@
       box-shadow: 0 4px 14px rgba(124,58,237,0.35);
     }
     .select-btn:active { transform: scale(0.95); box-shadow: none; }
-    .select-btn span {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      opacity: 0.85;
-      margin-top: 2px;
-    }
+    .select-btn span { display: block; font-size: 13px; font-weight: 600; opacity: 0.85; margin-top: 2px; }
 
     /* ── GAME ── */
     .game-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       width: 100%;
     }
-    .progress-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
-    }
-    .score-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
-    }
+    .progress-text { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .score-text    { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.9); }
 
-    /* Timer ring */
-    .timer-wrap {
-      position: relative;
-      width: 72px;
-      height: 72px;
-      flex-shrink: 0;
-    }
+    .timer-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
     .timer-ring { transform: rotate(-90deg); }
-    .timer-ring-bg {
-      fill: none;
-      stroke: rgba(255,255,255,0.2);
-      stroke-width: 5;
-    }
-    .timer-ring-progress {
-      fill: none;
-      stroke: #fbbf24;
-      stroke-width: 5;
-      stroke-linecap: round;
-      stroke-dasharray: 188.5;
-      stroke-dashoffset: 0;
-      transition: stroke-dashoffset 1s linear, stroke 0.3s;
-    }
+    .timer-ring-bg       { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 5; }
+    .timer-ring-progress { fill: none; stroke: #fbbf24; stroke-width: 5; stroke-linecap: round;
+                           stroke-dasharray: 188.5; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
     .timer-number {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 900;
-      color: #fff;
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; color: #fff;
     }
 
-    /* Question */
-    .question-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #9333ea;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .question-text {
-      font-size: 42px;
-      font-weight: 900;
-      color: #1e1b4b;
-      margin-bottom: 24px;
-      letter-spacing: -1px;
-    }
+    .question-label { font-size: 13px; font-weight: 600; color: #9333ea; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .question-text  { font-size: 42px; font-weight: 900; color: #1e1b4b; margin-bottom: 24px; letter-spacing: -1px; }
 
-    /* Answer buttons */
-    .answers {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .answer-btn {
-      background: #f5f3ff;
-      border: 3px solid #e9d5ff;
-      border-radius: 16px;
-      padding: 20px 8px;
-      font-size: 28px;
-      font-weight: 900;
-      color: #5b21b6;
-      cursor: pointer;
-      transition: transform 0.1s, background 0.2s, border-color 0.2s;
+      background: #f5f3ff; border: 3px solid #e9d5ff; border-radius: 16px;
+      padding: 20px 8px; font-size: 28px; font-weight: 900; color: #5b21b6;
+      cursor: pointer; transition: transform 0.1s, background 0.2s, border-color 0.2s;
     }
     .answer-btn:not(:disabled):active { transform: scale(0.95); }
-    .answer-btn.correct {
-      background: #d1fae5;
-      border-color: #34d399;
-      color: #065f46;
-    }
-    .answer-btn.wrong {
-      background: #fee2e2;
-      border-color: #f87171;
-      color: #991b1b;
-    }
-    .answer-btn.reveal {
-      background: #d1fae5;
-      border-color: #34d399;
-      color: #065f46;
-    }
+    .answer-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+    .answer-btn.wrong   { background: #fee2e2; border-color: #f87171; color: #991b1b; }
+    .answer-btn.reveal  { background: #d1fae5; border-color: #34d399; color: #065f46; }
     .answer-btn:disabled { cursor: default; }
 
-    /* Feedback */
-    .feedback {
-      margin-top: 16px;
-      font-size: 18px;
-      font-weight: 800;
-      min-height: 28px;
-      transition: opacity 0.2s;
-    }
+    .feedback { margin-top: 16px; font-size: 18px; font-weight: 800; min-height: 28px; }
     .feedback.correct { color: #059669; }
     .feedback.wrong   { color: #dc2626; }
     .feedback.timeout { color: #d97706; }
 
-    /* Progress bar */
-    .progress-bar-wrap {
-      width: 100%;
-      height: 8px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 99px;
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: #fbbf24;
-      border-radius: 99px;
-      transition: width 0.4s ease;
-    }
+    .progress-bar-wrap { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 99px; margin-bottom: 14px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: #fbbf24; border-radius: 99px; transition: width 0.4s ease; }
+
+    /* Live stopwatch */
+    .stopwatch { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.75); margin-bottom: 6px; text-align: center; letter-spacing: 0.5px; }
 
     /* ── RESULT ── */
-    .result-emoji { font-size: 64px; margin-bottom: 8px; }
-    .result-title {
-      font-size: 26px;
-      font-weight: 900;
-      color: #5b21b6;
-      margin-bottom: 4px;
-    }
-    .result-score {
-      font-size: 16px;
-      color: #7c3aed;
-      margin-bottom: 24px;
-    }
+    .result-emoji { font-size: 60px; margin-bottom: 6px; }
+    .result-title { font-size: 26px; font-weight: 900; color: #5b21b6; margin-bottom: 4px; }
+    .result-score { font-size: 16px; color: #7c3aed; margin-bottom: 6px; }
+    .result-time  { font-size: 14px; color: #9ca3af; margin-bottom: 20px; }
 
-    /* Stars */
-    .stars {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-    .star {
-      font-size: 52px;
-      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-      transform: scale(0);
-      filter: grayscale(1);
-      opacity: 0.3;
-    }
-    .star.earned {
-      filter: none;
-      opacity: 1;
-      transform: scale(1);
-    }
+    .stars { display: flex; justify-content: center; gap: 8px; margin-bottom: 18px; }
+    .star { font-size: 50px; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); transform: scale(0); filter: grayscale(1); opacity: 0.3; }
+    .star.earned { filter: none; opacity: 1; transform: scale(1); }
     .star.earned:nth-child(1) { transition-delay: 0.1s; }
     .star.earned:nth-child(2) { transition-delay: 0.4s; }
     .star.earned:nth-child(3) { transition-delay: 0.7s; }
 
-    .result-msg {
-      font-size: 16px;
-      color: #6b7280;
-      margin-bottom: 28px;
-      line-height: 1.5;
+    /* Leaderboard position badge on result */
+    .lb-badge {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1c1917;
+    }
+
+    .result-msg { font-size: 15px; color: #6b7280; margin-bottom: 24px; line-height: 1.5; }
+
+    /* ── LEADERBOARD SCREEN ── */
+    .lb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .lb-title { font-size: 22px; font-weight: 900; color: #5b21b6; }
+
+    /* Source tabs: Lokalt / Sky */
+    .lb-tabs {
+      display: flex;
+      background: #f5f3ff;
+      border-radius: 12px;
+      padding: 3px;
+      margin-bottom: 12px;
+      gap: 3px;
+    }
+    .lb-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lb-tab.active { background: #7c3aed; color: #fff; }
+
+    .lb-filter { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center; }
+    .lb-filter-btn {
+      background: #f5f3ff; border: 2px solid #e9d5ff; border-radius: 20px;
+      padding: 6px 14px; font-size: 13px; font-weight: 700; color: #7c3aed; cursor: pointer;
+    }
+    .lb-filter-btn.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+
+    .lb-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; min-height: 80px; }
+    .lb-empty { color: #9ca3af; font-size: 15px; padding: 20px 0; }
+
+    .lb-row {
+      display: flex; align-items: center; gap: 12px;
+      background: #faf5ff; border-radius: 12px; padding: 12px 14px;
+      border: 2px solid #e9d5ff;
+    }
+    .lb-row.highlight { background: #ede9fe; border-color: #7c3aed; }
+    .lb-rank { font-size: 22px; width: 32px; text-align: center; flex-shrink: 0; }
+    .lb-info { flex: 1; text-align: left; }
+    .lb-name { font-size: 16px; font-weight: 800; color: #1e1b4b; }
+    .lb-date { font-size: 12px; color: #9ca3af; margin-top: 1px; }
+    .lb-time { font-size: 18px; font-weight: 900; color: #7c3aed; flex-shrink: 0; }
+
+    /* Cloud loading state */
+    .lb-loading {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 24px 0; color: #9ca3af; font-size: 15px; font-weight: 600;
+    }
+    .lb-spinner {
+      width: 18px; height: 18px; border: 3px solid #e9d5ff;
+      border-top-color: #7c3aed; border-radius: 50%;
+      animation: spin 0.7s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .lb-cloud-off {
+      background: #fef3c7; border: 1.5px solid #fcd34d;
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 12px;
+      font-size: 13px; color: #92400e; text-align: left;
     }
 
     /* ── BUTTONS ── */
     .btn-primary {
-      display: block;
-      width: 100%;
+      display: block; width: 100%;
       background: linear-gradient(135deg, #7c3aed, #db2777);
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      padding: 18px;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
+      color: #fff; border: none; border-radius: 16px; padding: 18px;
+      font-size: 18px; font-weight: 800; cursor: pointer;
       box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-      transition: transform 0.1s, box-shadow 0.1s;
-      margin-bottom: 12px;
+      transition: transform 0.1s, box-shadow 0.1s; margin-bottom: 10px;
     }
     .btn-primary:active { transform: scale(0.97); box-shadow: none; }
-
     .btn-secondary {
-      display: block;
-      width: 100%;
-      background: transparent;
-      color: #7c3aed;
-      border: 2.5px solid #c4b5fd;
-      border-radius: 16px;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.15s;
+      display: block; width: 100%; background: transparent;
+      color: #7c3aed; border: 2.5px solid #c4b5fd; border-radius: 16px;
+      padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
+      transition: background 0.15s; margin-bottom: 10px;
     }
     .btn-secondary:active { background: #f5f3ff; }
+    .btn-ghost {
+      background: none; border: none; color: #9ca3af;
+      font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px;
+    }
 
     /* Confetti */
-    .confetti-wrap {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 999;
-    }
+    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 999; }
     .confetti-piece {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
+      position: absolute; width: 10px; height: 10px; border-radius: 2px;
       animation: confettiFall linear forwards;
     }
     @keyframes confettiFall {
@@ -347,8 +302,12 @@
   <div class="card">
     <img src="thelma.jpg" alt="Thelma" class="thelma-photo">
     <div class="home-title">Thelmas<br>gangetabell</div>
-    <div class="home-sub">Øv på 1–10 tabellen!</div>
-    <button class="btn-primary" onclick="showSelect()">La oss starte! 🚀</button>
+    <label class="name-label" for="name-input">Hva heter du?</label>
+    <input id="name-input" class="name-input" type="text" placeholder="Skriv navnet ditt..." maxlength="20" autocomplete="off">
+    <div class="home-buttons">
+      <button class="btn-primary" onclick="goToSelect()">La oss starte! 🚀</button>
+      <button class="btn-secondary" onclick="showLeaderboard()">🏆 Leaderboard</button>
+    </div>
   </div>
 </div>
 
@@ -367,6 +326,7 @@
 
 <!-- ── GAME ── -->
 <div id="screen-game" class="screen">
+  <div class="stopwatch" id="stopwatch">⏱ 0.0s</div>
   <div class="game-header">
     <div class="progress-text" id="progress-text">Spørsmål 1 av 10</div>
     <div class="timer-wrap">
@@ -374,15 +334,13 @@
         <circle class="timer-ring-bg" cx="36" cy="36" r="30"/>
         <circle class="timer-ring-progress" id="timer-ring" cx="36" cy="36" r="30"/>
       </svg>
-      <div class="timer-number" id="timer-number">5</div>
+      <div class="timer-number" id="timer-number">10</div>
     </div>
     <div class="score-text" id="score-text">✅ 0</div>
   </div>
-
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
   </div>
-
   <div class="card">
     <div class="question-label">Hva er…</div>
     <div class="question-text" id="question-text">5 × 6 = ?</div>
@@ -397,88 +355,255 @@
     <div class="result-emoji" id="result-emoji">🎉</div>
     <div class="result-title" id="result-title">Bra jobba!</div>
     <div class="result-score" id="result-score">Du fikk 8 av 10 riktige!</div>
+    <div class="result-time"  id="result-time"></div>
     <div class="stars">
       <div class="star" id="star1">⭐</div>
       <div class="star" id="star2">⭐</div>
       <div class="star" id="star3">⭐</div>
     </div>
+    <div class="lb-badge" id="lb-badge" style="display:none"></div>
     <div class="result-msg" id="result-msg"></div>
-    <button class="btn-primary" onclick="showSelect()">Prøv igjen 🔁</button>
-    <button class="btn-secondary" onclick="showHome()">Hjem 🏠</button>
+    <button class="btn-primary"   onclick="goToSelect()">Prøv igjen 🔁</button>
+    <button class="btn-secondary" onclick="showLeaderboard()">🏆 Se leaderboard</button>
+    <button class="btn-ghost"     onclick="showHome()">Hjem</button>
+  </div>
+</div>
+
+<!-- ── LEADERBOARD ── -->
+<div id="screen-leaderboard" class="screen">
+  <div class="card">
+    <div class="lb-header">
+      <div class="lb-title">🏆 Leaderboard</div>
+      <button class="btn-ghost" onclick="showHome()">✕ Lukk</button>
+    </div>
+
+    <!-- Local / Cloud tabs -->
+    <div class="lb-tabs">
+      <button class="lb-tab active" id="tab-local" onclick="setLbSource('local')">📱 Lokalt</button>
+      <button class="lb-tab" id="tab-cloud" onclick="setLbSource('cloud')">☁️ Sky (alle)</button>
+    </div>
+
+    <div id="lb-cloud-off-notice" class="lb-cloud-off" style="display:none">
+      ☁️ Sky-leaderboard er ikke satt opp ennå.
+    </div>
+
+    <div class="lb-filter" id="lb-filter">
+      <button class="lb-filter-btn active" onclick="setLbFilter(10, this)">10 spørsm.</button>
+      <button class="lb-filter-btn" onclick="setLbFilter(15, this)">15 spørsm.</button>
+      <button class="lb-filter-btn" onclick="setLbFilter(20, this)">20 spørsm.</button>
+      <button class="lb-filter-btn" onclick="setLbFilter(25, this)">25 spørsm.</button>
+    </div>
+    <div class="lb-list" id="lb-list"></div>
+    <button class="btn-secondary" onclick="showHome()">← Tilbake</button>
   </div>
 </div>
 
 <div class="confetti-wrap" id="confetti"></div>
 
-<script>
-  // ── STATE ──
-  let questions = [];
-  let currentIdx = 0;
-  let score = 0;
-  let total = 10;
-  let timerInterval = null;
-  let timeLeft = 5;
-  let answered = false;
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
-  const CIRCUMFERENCE = 2 * Math.PI * 30; // r=30 → 188.5
+<script>
+  // ─────────────────────────────────────────────────────────────
+  // FIREBASE CONFIG
+  // Fyll inn verdiene fra Firebase-konsollen:
+  // https://console.firebase.google.com → Prosjektinnstillinger → Din app
+  // ─────────────────────────────────────────────────────────────
+  const FIREBASE_CONFIG = {
+    apiKey:            "DIN_API_KEY",
+    authDomain:        "DIN_PROJECT.firebaseapp.com",
+    databaseURL:       "https://DIN_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "DIN_PROJECT",
+    storageBucket:     "DIN_PROJECT.appspot.com",
+    messagingSenderId: "DIN_SENDER_ID",
+    appId:             "DIN_APP_ID"
+  };
+
+  // ─────────────────────────────────────────────────────────────
+  // FIREBASE INIT — skips gracefully if config is placeholder
+  // ─────────────────────────────────────────────────────────────
+  let db = null;
+  const firebaseReady = !FIREBASE_CONFIG.apiKey.startsWith('DIN_');
+  if (firebaseReady) {
+    try {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.database();
+    } catch (e) {
+      console.warn('Firebase init failed:', e);
+    }
+  }
+
+  // ── STATE ──
+  let questions      = [];
+  let currentIdx     = 0;
+  let score          = 0;
+  let total          = 10;
+  let playerName     = '';
+  let timerInterval  = null;
+  let stopwatchInt   = null;
+  let timeLeft       = 10;
+  let answered       = false;
+  let gameStartTime  = null;
+  let totalElapsed   = 0;
+  let lbFilter       = 10;
+  let lbSource       = 'local'; // 'local' | 'cloud'
+
+  const CIRCUMFERENCE = 2 * Math.PI * 30;
+  const MEDALS = ['🥇','🥈','🥉'];
 
   // ── NAVIGATION ──
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
-  function showHome()   { showScreen('screen-home'); }
-  function showSelect() { showScreen('screen-select'); }
+  function showHome() { showScreen('screen-home'); }
 
-  // ── QUESTION GENERATION ──
-  function generateQuestions(count) {
-    const qs = [];
-    for (let i = 0; i < count; i++) {
-      const a = rand(1, 10);
-      const b = rand(1, 10);
-      const correct = a * b;
-      const wrongs = generateWrongAnswers(correct, a, b);
-      const options = shuffle([correct, ...wrongs]);
-      qs.push({ a, b, correct, options });
-    }
-    return qs;
+  function goToSelect() {
+    playerName = document.getElementById('name-input').value.trim();
+    if (!playerName) { document.getElementById('name-input').focus(); return; }
+    showScreen('screen-select');
   }
 
-  function generateWrongAnswers(correct, a, b) {
-    const wrongs = new Set();
-    let tries = 0;
-    while (wrongs.size < 3 && tries < 80) {
-      tries++;
-      let w;
-      const r = Math.random();
-      if (r < 0.35) {
-        // Offset from correct
-        const offset = rand(1, 5) * (Math.random() < 0.5 ? 1 : -1);
-        w = correct + offset;
-      } else if (r < 0.65) {
-        // Swap one factor by ±1
-        const altA = clamp(a + (Math.random() < 0.5 ? 1 : -1), 1, 10);
-        w = altA * b;
-      } else {
-        const altB = clamp(b + (Math.random() < 0.5 ? 1 : -1), 1, 10);
-        w = a * altB;
+  // ── LOCAL LEADERBOARD ──
+  function getLeaderboard() {
+    return JSON.parse(localStorage.getItem('thelmas_leaderboard') || '[]');
+  }
+
+  function saveToLocalLeaderboard(name, time, count) {
+    const lb = getLeaderboard();
+    lb.push({ name, time, questions: count, date: new Date().toLocaleDateString('no-NO') });
+    lb.sort((a, b) => a.questions !== b.questions ? a.questions - b.questions : a.time - b.time);
+    localStorage.setItem('thelmas_leaderboard', JSON.stringify(lb.slice(0, 200)));
+  }
+
+  function getLocalLeaderboardForCount(count) {
+    return getLeaderboard()
+      .filter(e => e.questions === count)
+      .sort((a, b) => a.time - b.time)
+      .slice(0, 10);
+  }
+
+  function getRankForEntry(name, time, count) {
+    const lb = getLocalLeaderboardForCount(count);
+    const idx = lb.findIndex(e => e.name === name && Math.abs(e.time - time) < 0.01);
+    return idx >= 0 ? idx + 1 : null;
+  }
+
+  // ── CLOUD LEADERBOARD ──
+  function saveToCloud(name, time, count) {
+    if (!db) return;
+    db.ref(`leaderboard/${count}`).push({
+      name,
+      time,
+      date: new Date().toLocaleDateString('no-NO')
+    }).catch(e => console.warn('Cloud save failed:', e));
+  }
+
+  function getCloudLeaderboardForCount(count) {
+    return new Promise((resolve) => {
+      if (!db) { resolve([]); return; }
+      db.ref(`leaderboard/${count}`)
+        .orderByChild('time')
+        .limitToFirst(10)
+        .get()
+        .then(snapshot => {
+          if (!snapshot.exists()) { resolve([]); return; }
+          const entries = [];
+          snapshot.forEach(child => entries.push(child.val()));
+          entries.sort((a, b) => a.time - b.time);
+          resolve(entries.slice(0, 10));
+        })
+        .catch(() => resolve([]));
+    });
+  }
+
+  // ── LEADERBOARD UI ──
+  function setLbSource(source) {
+    lbSource = source;
+    document.getElementById('tab-local').classList.toggle('active', source === 'local');
+    document.getElementById('tab-cloud').classList.toggle('active', source === 'cloud');
+    const notice = document.getElementById('lb-cloud-off-notice');
+    if (source === 'cloud' && !firebaseReady) {
+      notice.style.display = 'block';
+    } else {
+      notice.style.display = 'none';
+    }
+    renderLeaderboard();
+  }
+
+  function setLbFilter(count, btn) {
+    lbFilter = count;
+    document.querySelectorAll('.lb-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLeaderboard();
+  }
+
+  function showLeaderboard() {
+    lbFilter = total || 10;
+    document.querySelectorAll('.lb-filter-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.textContent) === lbFilter);
+    });
+    renderLeaderboard();
+    showScreen('screen-leaderboard');
+  }
+
+  function renderLeaderboard() {
+    if (lbSource === 'cloud') {
+      renderCloudLeaderboard();
+    } else {
+      renderLocalLeaderboard();
+    }
+  }
+
+  function renderLocalLeaderboard() {
+    const list = document.getElementById('lb-list');
+    const entries = getLocalLeaderboardForCount(lbFilter);
+    if (!entries.length) {
+      list.innerHTML = '<div class="lb-empty">Ingen rekorder ennå for ' + lbFilter + ' spørsmål.<br>Vær den første! 🌟</div>';
+      return;
+    }
+    list.innerHTML = buildRows(entries, playerName);
+  }
+
+  function renderCloudLeaderboard() {
+    if (!firebaseReady) return;
+    const list = document.getElementById('lb-list');
+    list.innerHTML = '<div class="lb-loading"><div class="lb-spinner"></div>Laster rekorder…</div>';
+    getCloudLeaderboardForCount(lbFilter).then(entries => {
+      if (!entries.length) {
+        list.innerHTML = '<div class="lb-empty">Ingen sky-rekorder ennå for ' + lbFilter + ' spørsmål.<br>Vær den første! 🌟</div>';
+        return;
       }
-      if (w > 0 && w <= 100 && w !== correct) wrongs.add(w);
-    }
-    // Safety fill
-    const pool = [correct - 2, correct + 2, correct - 3, correct + 3,
-                  correct - 5, correct + 5, correct - 1, correct + 1];
-    for (const v of pool) {
-      if (wrongs.size >= 3) break;
-      if (v > 0 && v <= 100 && v !== correct) wrongs.add(v);
-    }
-    return [...wrongs].slice(0, 3);
+      list.innerHTML = buildRows(entries, playerName);
+    });
   }
 
-  function rand(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  function buildRows(entries, highlight) {
+    return entries.map((e, i) => `
+      <div class="lb-row ${e.name === highlight ? 'highlight' : ''}">
+        <div class="lb-rank">${i < 3 ? MEDALS[i] : (i + 1) + '.'}</div>
+        <div class="lb-info">
+          <div class="lb-name">${escHtml(e.name)}</div>
+          <div class="lb-date">${e.date} · ${lbFilter} spørsm.</div>
+        </div>
+        <div class="lb-time">${formatTime(e.time)}</div>
+      </div>
+    `).join('');
   }
-  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── HELPERS ──
+  function formatTime(s) {
+    if (s < 60) return s.toFixed(1) + 's';
+    const m = Math.floor(s / 60);
+    return `${m}m ${(s % 60).toFixed(1)}s`;
+  }
+  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
   function shuffle(arr) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
@@ -488,14 +613,50 @@
     return a;
   }
 
+  // ── QUESTION GENERATION ──
+  function generateQuestions(count) {
+    return Array.from({ length: count }, () => {
+      const a = rand(1, 10), b = rand(1, 10), correct = a * b;
+      return { a, b, correct, options: shuffle([correct, ...generateWrongAnswers(correct, a, b)]) };
+    });
+  }
+
+  function generateWrongAnswers(correct, a, b) {
+    const wrongs = new Set();
+    let tries = 0;
+    while (wrongs.size < 3 && tries++ < 80) {
+      const r = Math.random();
+      let w = r < 0.35
+        ? correct + rand(1, 5) * (Math.random() < 0.5 ? 1 : -1)
+        : r < 0.65
+          ? clamp(a + (Math.random() < 0.5 ? 1 : -1), 1, 10) * b
+          : a * clamp(b + (Math.random() < 0.5 ? 1 : -1), 1, 10);
+      if (w > 0 && w <= 100 && w !== correct) wrongs.add(w);
+    }
+    const fill = [2,3,5,1,-1,-2,-3].map(d => correct + d).filter(v => v > 0 && v <= 100 && v !== correct);
+    for (const v of fill) { if (wrongs.size >= 3) break; wrongs.add(v); }
+    return [...wrongs].slice(0, 3);
+  }
+
   // ── GAME START ──
   function startGame(count) {
-    total = count;
-    score = 0;
+    total      = count;
+    score      = 0;
     currentIdx = 0;
-    questions = generateQuestions(count);
+    questions  = generateQuestions(count);
+    gameStartTime = null;
+    totalElapsed  = 0;
     showScreen('screen-game');
     showQuestion();
+  }
+
+  // ── STOPWATCH ──
+  function startStopwatch() {
+    clearInterval(stopwatchInt);
+    stopwatchInt = setInterval(() => {
+      const elapsed = (Date.now() - gameStartTime) / 1000;
+      document.getElementById('stopwatch').textContent = '⏱ ' + formatTime(elapsed);
+    }, 100);
   }
 
   // ── SHOW QUESTION ──
@@ -504,20 +665,16 @@
     const q = questions[currentIdx];
     timeLeft = 10;
 
-    // Header
-    document.getElementById('progress-text').textContent =
-      `Spørsmål ${currentIdx + 1} av ${total}`;
-    document.getElementById('score-text').textContent = `✅ ${score}`;
+    if (currentIdx === 0) {
+      gameStartTime = Date.now();
+      startStopwatch();
+    }
 
-    // Progress bar
-    const pct = (currentIdx / total) * 100;
-    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = `Spørsmål ${currentIdx + 1} av ${total}`;
+    document.getElementById('score-text').textContent    = `✅ ${score}`;
+    document.getElementById('progress-bar').style.width = (currentIdx / total * 100) + '%';
+    document.getElementById('question-text').textContent = `${q.a} × ${q.b} = ?`;
 
-    // Question
-    document.getElementById('question-text').textContent =
-      `${q.a} × ${q.b} = ?`;
-
-    // Answers
     const answersEl = document.getElementById('answers');
     answersEl.innerHTML = '';
     q.options.forEach(opt => {
@@ -528,47 +685,43 @@
       answersEl.appendChild(btn);
     });
 
-    // Feedback
     document.getElementById('feedback').textContent = '';
-    document.getElementById('feedback').className = 'feedback';
-
-    // Timer
+    document.getElementById('feedback').className   = 'feedback';
     startTimer(q.correct);
   }
 
   // ── TIMER ──
   function startTimer(correct) {
     clearInterval(timerInterval);
-    updateTimerUI(5);
-
+    updateTimerUI(10);
     timerInterval = setInterval(() => {
       timeLeft--;
       updateTimerUI(timeLeft);
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        if (!answered) timeOut(correct);
-      }
+      if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) timeOut(correct); }
     }, 1000);
   }
 
   function updateTimerUI(t) {
     const ring = document.getElementById('timer-ring');
     const num  = document.getElementById('timer-number');
-    const offset = CIRCUMFERENCE * (1 - t / 10);
-    ring.style.strokeDashoffset = offset;
+    ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - t / 10);
     ring.style.stroke = t <= 3 ? '#ef4444' : '#fbbf24';
     num.textContent = t;
   }
 
-  // ── ANSWER SELECTION ──
+  // ── ANSWER ──
   function selectAnswer(chosen, correct) {
     if (answered) return;
     answered = true;
     clearInterval(timerInterval);
 
+    if (currentIdx === total - 1) {
+      totalElapsed = (Date.now() - gameStartTime) / 1000;
+      clearInterval(stopwatchInt);
+    }
+
     const buttons = document.querySelectorAll('.answer-btn');
     const fb = document.getElementById('feedback');
-
     buttons.forEach(btn => {
       btn.disabled = true;
       const val = parseInt(btn.textContent);
@@ -579,35 +732,33 @@
     if (chosen === correct) {
       score++;
       fb.textContent = '🎉 Riktig!';
-      fb.className = 'feedback correct';
+      fb.className   = 'feedback correct';
     } else {
       fb.textContent = `😬 Riktig svar var ${correct}`;
-      fb.className = 'feedback wrong';
+      fb.className   = 'feedback wrong';
     }
-
     setTimeout(nextQuestion, 1200);
   }
 
   function timeOut(correct) {
     answered = true;
-    const buttons = document.querySelectorAll('.answer-btn');
-    const fb = document.getElementById('feedback');
-    buttons.forEach(btn => {
+    if (currentIdx === total - 1) {
+      totalElapsed = (Date.now() - gameStartTime) / 1000;
+      clearInterval(stopwatchInt);
+    }
+    document.querySelectorAll('.answer-btn').forEach(btn => {
       btn.disabled = true;
       if (parseInt(btn.textContent) === correct) btn.classList.add('reveal');
     });
+    const fb = document.getElementById('feedback');
     fb.textContent = `⏰ Tiden gikk ut! Svaret var ${correct}`;
-    fb.className = 'feedback timeout';
+    fb.className   = 'feedback timeout';
     setTimeout(nextQuestion, 1400);
   }
 
   function nextQuestion() {
     currentIdx++;
-    if (currentIdx < total) {
-      showQuestion();
-    } else {
-      showResult();
-    }
+    currentIdx < total ? showQuestion() : showResult();
   }
 
   // ── RESULT ──
@@ -616,38 +767,45 @@
 
     const pct = score / total;
     let stars = 0;
-    if (pct >= 1.0)  stars = 3;
+    if (pct >= 1.0) stars = 3;
     else if (pct >= 0.85) stars = 2;
     else if (pct >= 0.70) stars = 1;
 
-    // Score text
-    document.getElementById('result-score').textContent =
-      `Du fikk ${score} av ${total} riktige!`;
+    const perfect = score === total;
 
-    // Emoji + title + message
+    document.getElementById('result-score').textContent = `Du fikk ${score} av ${total} riktige!`;
+    document.getElementById('result-time').textContent  = perfect ? `⏱ Tid: ${formatTime(totalElapsed)}` : '';
+
     const configs = [
       { emoji: '💪', title: 'Øv litt mer!',   msg: 'Du klarer det! Prøv igjen og se om du kan få flere riktige. 🌈' },
       { emoji: '😊', title: 'Bra jobba!',      msg: 'Du er på god vei! Litt mer øving og du er ekspert. 📚' },
-      { emoji: '🥳', title: 'Nesten perfekt!', msg: 'Kjempebra! Du er veldig flink! Klarer du 3 stjerner neste gang? ✨' },
-      { emoji: '🏆', title: 'Perfekt!',        msg: 'WOW! Du fikk alt riktig! Du er en gangetabell-stjerne! 🌟🌟🌟' },
+      { emoji: '🥳', title: 'Nesten perfekt!', msg: 'Kjempebra! Klarer du alle riktige neste gang? ✨' },
+      { emoji: '🏆', title: 'Perfekt!',        msg: 'WOW! Du fikk alt riktig! Du er en gangetabell-stjerne! 🌟' },
     ];
     const cfg = configs[stars];
     document.getElementById('result-emoji').textContent = cfg.emoji;
     document.getElementById('result-title').textContent = cfg.title;
     document.getElementById('result-msg').textContent   = cfg.msg;
 
-    // Reset stars
-    ['star1','star2','star3'].forEach(id => {
-      document.getElementById(id).classList.remove('earned');
-    });
-
-    // Animate stars in
+    ['star1','star2','star3'].forEach(id => document.getElementById(id).classList.remove('earned'));
     setTimeout(() => {
-      for (let i = 1; i <= stars; i++) {
-        document.getElementById(`star${i}`).classList.add('earned');
-      }
+      for (let i = 1; i <= stars; i++) document.getElementById(`star${i}`).classList.add('earned');
       if (stars === 3) launchConfetti();
     }, 200);
+
+    const badge = document.getElementById('lb-badge');
+    if (perfect) {
+      saveToLocalLeaderboard(playerName, totalElapsed, total);
+      saveToCloud(playerName, totalElapsed, total);
+      const rank = getRankForEntry(playerName, totalElapsed, total);
+      if (rank) {
+        const medal = rank <= 3 ? MEDALS[rank - 1] + ' ' : '';
+        badge.textContent = `${medal}Plass ${rank} lokalt! (${formatTime(totalElapsed)})`;
+        badge.style.display = 'block';
+      }
+    } else {
+      badge.style.display = 'none';
+    }
   }
 
   // ── CONFETTI ──
@@ -658,18 +816,23 @@
     for (let i = 0; i < 80; i++) {
       const el = document.createElement('div');
       el.className = 'confetti-piece';
-      el.style.left = Math.random() * 100 + 'vw';
-      el.style.top  = '-10px';
-      el.style.background = colors[Math.floor(Math.random() * colors.length)];
-      el.style.width  = (Math.random() * 8 + 6) + 'px';
-      el.style.height = (Math.random() * 8 + 6) + 'px';
-      el.style.animationDuration = (Math.random() * 2 + 2) + 's';
-      el.style.animationDelay   = (Math.random() * 1.5) + 's';
-      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.cssText = `
+        left: ${Math.random() * 100}vw; top: -10px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        width: ${Math.random() * 8 + 6}px; height: ${Math.random() * 8 + 6}px;
+        animation-duration: ${Math.random() * 2 + 2}s;
+        animation-delay: ${Math.random() * 1.5}s;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      `;
       wrap.appendChild(el);
     }
     setTimeout(() => { wrap.innerHTML = ''; }, 5000);
   }
+
+  // ── ENTER KEY on name field ──
+  document.getElementById('name-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') goToSelect();
+  });
 
   // ── SERVICE WORKER ──
   if ('serviceWorker' in navigator) {
