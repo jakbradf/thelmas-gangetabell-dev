@@ -400,38 +400,24 @@
 
 <div class="confetti-wrap" id="confetti"></div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <script>
   // ─────────────────────────────────────────────────────────────
-  // FIREBASE CONFIG
-  // Fyll inn verdiene fra Firebase-konsollen:
-  // https://console.firebase.google.com → Prosjektinnstillinger → Din app
+  // SUPABASE CONFIG
+  // Fyll inn verdiene fra Supabase-konsollen:
+  // supabase.com → prosjekt → Settings → API
   // ─────────────────────────────────────────────────────────────
-  const FIREBASE_CONFIG = {
-    apiKey:            "DIN_API_KEY",
-    authDomain:        "DIN_PROJECT.firebaseapp.com",
-    databaseURL:       "https://DIN_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId:         "DIN_PROJECT",
-    storageBucket:     "DIN_PROJECT.appspot.com",
-    messagingSenderId: "DIN_SENDER_ID",
-    appId:             "DIN_APP_ID"
-  };
+  const SUPABASE_URL      = 'https://DIN_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'DIN_ANON_KEY';
 
-  // ─────────────────────────────────────────────────────────────
-  // FIREBASE INIT — skips gracefully if config is placeholder
-  // ─────────────────────────────────────────────────────────────
-  let db = null;
-  const firebaseReady = !FIREBASE_CONFIG.apiKey.startsWith('DIN_');
-  if (firebaseReady) {
-    try {
-      firebase.initializeApp(FIREBASE_CONFIG);
-      db = firebase.database();
-    } catch (e) {
-      console.warn('Firebase init failed:', e);
-    }
+  const supabaseReady = !SUPABASE_URL.includes('DIN_PROJECT');
+
+  function sbHeaders() {
+    return {
+      'apikey':        SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type':  'application/json',
+      'Prefer':        'return=minimal'
+    };
   }
 
   // ── STATE ──
@@ -490,32 +476,23 @@
     return idx >= 0 ? idx + 1 : null;
   }
 
-  // ── CLOUD LEADERBOARD ──
+  // ── CLOUD LEADERBOARD (Supabase) ──
   function saveToCloud(name, time, count) {
-    if (!db) return;
-    db.ref(`leaderboard/${count}`).push({
-      name,
-      time,
-      date: new Date().toLocaleDateString('no-NO')
+    if (!supabaseReady) return;
+    fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+      method:  'POST',
+      headers: sbHeaders(),
+      body:    JSON.stringify({ name, time, questions: count, date: new Date().toLocaleDateString('no-NO') })
     }).catch(e => console.warn('Cloud save failed:', e));
   }
 
   function getCloudLeaderboardForCount(count) {
-    return new Promise((resolve) => {
-      if (!db) { resolve([]); return; }
-      db.ref(`leaderboard/${count}`)
-        .orderByChild('time')
-        .limitToFirst(10)
-        .get()
-        .then(snapshot => {
-          if (!snapshot.exists()) { resolve([]); return; }
-          const entries = [];
-          snapshot.forEach(child => entries.push(child.val()));
-          entries.sort((a, b) => a.time - b.time);
-          resolve(entries.slice(0, 10));
-        })
-        .catch(() => resolve([]));
-    });
+    if (!supabaseReady) return Promise.resolve([]);
+    const url = `${SUPABASE_URL}/rest/v1/leaderboard`
+      + `?questions=eq.${count}&order=time.asc&limit=10`;
+    return fetch(url, { headers: sbHeaders() })
+      .then(r => r.ok ? r.json() : [])
+      .catch(() => []);
   }
 
   // ── LEADERBOARD UI ──
@@ -524,7 +501,7 @@
     document.getElementById('tab-local').classList.toggle('active', source === 'local');
     document.getElementById('tab-cloud').classList.toggle('active', source === 'cloud');
     const notice = document.getElementById('lb-cloud-off-notice');
-    if (source === 'cloud' && !firebaseReady) {
+    if (source === 'cloud' && !supabaseReady) {
       notice.style.display = 'block';
     } else {
       notice.style.display = 'none';
