@@ -581,7 +581,9 @@
 
   function confirmDelete(btn, source) {
     const row = btn.closest('.lb-row');
-    if (!confirm('Slette denne rekorden?')) return;
+    const pin = prompt('Skriv inn admin-PIN for å slette:');
+    if (pin === null) return;
+    if (pin !== '0988') { alert('Feil PIN.'); return; }
     if (source === 'local') {
       deleteLocalEntry(row);
     } else {
